@@ -1,11 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Aplikacja lekcyjna</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            min-height: 100vh;
+            background-color: #343a40;
+            color: white;
+            padding-top: 20px;
+        }
+        .sidebar h4 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin: 5px 10px;
+            border-radius: 5px;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        #chat-box {
+            height: 300px;
+            overflow-y: scroll;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        #teacher-board {
+            height: 150px;
+        }
+        textarea {
+            resize: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Czesc</h1>
+<div class="container-fluid">
+    <div class="row">
+        <!-- PANEL BOCZNY -->
+        <aside class="col-md-3 col-lg-2 sidebar">
+            <h4>Menu</h4>
+            <a href="#section-board">📋 Tablica nauczyciela</a>
+            <a href="#section-chat">💭 Czat grupowy</a>
+            <a href="#section-notes">📝 Notatki</a>
+            <hr>
+            <h6 class="text-center">Użytkownik</h6>
+            <div class="px-3">
+                <input type="text" class="form-control mb-2" placeholder="Imię">
+                <select class="form-select mb-2">
+                    <option>Uczeń</option>
+                    <option>Nauczyciel</option>
+                </select>
+                <button class="btn btn-primary w-100">Zaloguj</button>
+            </div>
+        </aside>
+
+        <!-- GŁÓWNA ZAWARTOŚĆ -->
+        <main class="col-md-9 col-lg-10 p-4">
+            <h2 class="text-center mb-4">💬 Aplikacja Lekcyjna</h2>
+
+            <!-- TABLICA NAUCZYCIELA -->
+            <section id="section-board" class="content-section active">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">📋 Tablica nauczyciela</div>
+                    <div class="card-body">
+                        <textarea id="teacher-board" class="form-control" placeholder="Tylko nauczyciel może edytować"></textarea>
+                        <button class="btn btn-success mt-2">Zapisz tablicę</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CZAT GRUPOWY -->
+            <section id="section-chat" class="content-section">
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">💭 Czat grupowy</div>
+                    <div class="card-body">
+                        <div id="chat-box"></div>
+                        <div class="input-group mt-2">
+                            <input type="text" class="form-control" placeholder="Napisz wiadomość...">
+                            <button class="btn btn-success">Wyślij</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRYWATNE NOTATKI -->
+            <section id="section-notes" class="content-section">
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">📝 Prywatne notatki</div>
+                    <div class="card-body">
+                        <textarea class="form-control" rows="6" placeholder="Twoje prywatne notatki..."></textarea>
+                        <button class="btn btn-info mt-2">Zapisz notatkę</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
 </body>
 </html>
