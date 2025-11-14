@@ -1,0 +1,42 @@
+<?php
+require_once __DIR__ . '/../config.php';
+$user = authenticate($secretKey);
+$method = $_SERVER['REQUEST_METHOD'];
+$input = json_decode(file_get_contents("php://input"), true);
+$id = $_GET['id'] ?? null;
+
+switch($method){
+    case "GET":
+        if($id){
+            $stmt = $pdo->prepare("SELECT * FROM notes WHERE id=? AND user_id=?");
+            $stmt->execute([$id, $user->sub]);
+            echo json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+        } else {
+            $stmt = $pdo->prepare("SELECT * FROM notes WHERE user_id=?");
+            $stmt->execute([$user->sub]);
+            echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        }
+        break;
+    case "POST":
+        $content = $input['content'] ?? '';
+        if(!$content){ http_response_code(400); exit; }
+        $stmt = $pdo->prepare("INSERT INTO notes (user_id, content) VALUES (?,?)");
+        $stmt->execute([$user->sub, $content]);
+        echo json_encode(["id"=>$pdo->lastInsertId(),"content"=>$content]);
+        break;
+    case "PUT":
+    case "PATCH":
+        if(!$id || !$input['content']){ http_response_code(400); exit; }
+        $stmt = $pdo->prepare("UPDATE notes SET content=? WHERE id=? AND user_id=?");
+        $stmt->execute([$input['content'],$id,$user->sub]);
+        echo json_encode(["id"=>$id,"content"=>$input['content']]);
+        break;
+    case "DELETE":
+        if(!$id){ http_response_code(400); exit; }
+        $stmt = $pdo->prepare("DELETE FROM notes WHERE id=? AND user_id=?");
+        $stmt->execute([$id,$user->sub]);
+        echo json_encode(["status"=>"deleted","id"=>$id]);
+        break;
+    default:
+        http_response_code(405);
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>App</title>
+</head>
+<body>
+<h2>Logowanie</h2>
+<form id="loginForm">
+<input type="text" id="username" placeholder="Login"><br>
+<input type="password" id="password" placeholder="Hasło"><br>
+<select id="role">
+  <option value="student">Student</option>
+  <option value="teacher">Nauczyciel</option>
+</select><br>
+<button type="submit">Zaloguj</button>
+</form>
+<div id="loginResult"></div>
+
+<hr>
+<h2>Tablica nauczyciela</h2>
+<textarea id="boardContent" rows="4" cols="50"></textarea>
+<button id="saveBoard">Zapisz</button>
+<div id="boardResult"></div>
+
+<hr>
+<h2>Czat grupowy</h2>
+<div id="messages"></div>
+<input type="text" id="msgInput"><button id="sendMsg">Wyślij</button>
+
+<hr>
+<h2>Notatki prywatne</h2>
+<textarea id="noteInput" rows="4" cols="50"></textarea>
+<button id="saveNote">Zapisz</button>
+<div id="noteResult"></div>
+
+<script>
+let token = null;
+
+document.getElementById('loginForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const username=document.getElementById('username').value;
+  const password=document.getElementById('password').value;
+  const role=document.getElementById('role').value;
+  const res=await fetch('/api/auth.php',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({username,password,role})
+  });
+  const data=await res.json();
+  if(res.ok){ token=data.token; localStorage.setItem('jwt',token); document.getElementById('loginResult').innerText="Zalogowano!"; loadBoard(); loadMessages(); loadNotes();}
+  else document.getElementById('loginResult').innerText=data.error;
+});
+
+async function loadBoard(){
+  const res=await fetch('/api/endpoints/board.php',{headers:{Authorization:'Bearer '+token}});
+  const data=await res.json();
+  document.getElementById('boardContent').value=data.content||'';
+}
+
+document.getElementById('saveBoard').addEventListener('click', async ()=>{
+  const content=document.getElementById('boardContent').value;
+  await fetch('/api/endpoints/board.php',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({content})});
+  loadBoard();
+});
+
+async function loadMessages(){
+  const res=await fetch('/api/endpoints/messages.php',{headers:{Authorization:'Bearer '+token}});
+  const data=await res.json();
+  document.getElementById('messages').innerHTML=data.map(m=>`<b>${m.name}:</b> ${m.text}`).join('<br>');
+}
+
+document.getElementById('sendMsg').addEventListener('click', async ()=>{
+  const text=document.getElementById('msgInput').value;
+  await fetch('/api/endpoints/messages.php',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({text})});
+  document.getElementById('msgInput').value='';
+  loadMessages();
+});
+
+async function loadNotes(){
+  const res=await fetch('/api/endpoints/notes.php',{headers:{Authorization:'Bearer '+token}});
+  const data=await res.json();
+  document.getElementById('noteInput').value=(data[0]?.content||'');
+}
+
+document.getElementById('saveNote').addEventListener('click', async ()=>{
+  const content=document.getElementById('noteInput').value;
+  await fetch('/api/endpoints/notes.php',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({content})});
+  loadNotes();
+});
+
+// Polling co 2s dla czatu
+setInterval(()=>{if(token) loadMessages();},2000);
+</script>
+</body>
+</html>

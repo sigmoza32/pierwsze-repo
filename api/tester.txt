@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>API Tester</title>
+</head>
+<body>
+<h2>Tester API</h2>
+
+<label>Token JWT:</label><br>
+<input type="text" id="token" size="80" placeholder="Wklej tutaj token"><br><br>
+
+<label>Endpoint URL:</label><br>
+<input type="text" id="endpoint" size="80" placeholder="/api/endpoints/messages.php"><br><br>
+
+<label>Metoda:</label>
+<select id="method">
+  <option value="GET">GET</option>
+  <option value="POST">POST</option>
+  <option value="PUT">PUT</option>
+  <option value="PATCH">PATCH</option>
+  <option value="DELETE">DELETE</option>
+</select><br><br>
+
+<label>Body JSON (jeśli POST/PUT/PATCH):</label><br>
+<textarea id="body" rows="6" cols="80" placeholder='{"key":"value"}'></textarea><br><br>
+
+<button id="send">Wyślij</button>
+
+<h3>Odpowiedź:</h3>
+<pre id="response" style="background:#f4f4f4;padding:10px;border:1px solid #ccc;"></pre>
+
+<script>
+document.getElementById('send').addEventListener('click', async ()=>{
+  const token=document.getElementById('token').value;
+  const endpoint=document.getElementById('endpoint').value;
+  const method=document.getElementById('method').value;
+  let bodyText=document.getElementById('body').value;
+  let body=null;
+  if(bodyText.trim()) {
+    try { body=JSON.parse(bodyText); } 
+    catch(e){ document.getElementById('response').innerText="Błąd w JSON!"; return; }
+  }
+
+  const headers={};
+  if(token) headers['Authorization']='Bearer '+token;
+  if(body) headers['Content-Type']='application/json';
+
+  try{
+    const res=await fetch(endpoint,{
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : null
+    });
+    const text=await res.text();
+    try{
+      document.getElementById('response').innerText=JSON.stringify(JSON.parse(text),null,2);
+    } catch(e){
+      document.getElementById('response').innerText=text;
+    }
+  }catch(err){
+    document.getElementById('response').innerText=err;
+  }
+});
+</script>
+</body>
+</html>

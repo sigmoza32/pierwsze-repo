@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Tester API</title>
+</head>
+<body>
+<h2>Login</h2>
+<form id="loginForm">
+<input name="username" placeholder="Login">
+<input type="password" name="password" placeholder="Hasło">
+<button>Zaloguj</button>
+</form>
+<pre id="output"></pre>
+
+<script>
+let token = null;
+const output = document.getElementById("output");
+
+document.getElementById("loginForm").onsubmit = async e=>{
+    e.preventDefault();
+    const res = await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:e.target.username.value,password:e.target.password.value})});
+    const data = await res.json();
+    output.textContent = JSON.stringify(data,null,2);
+    if(data.token) token = data.token;
+};
+</script>
+</body>
+</html>
