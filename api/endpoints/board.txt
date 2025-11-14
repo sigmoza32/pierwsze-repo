@@ -1,0 +1,22 @@
+<?php
+require_once __DIR__ . '/../config.php';
+$user = authenticate($secretKey);
+$method = $_SERVER['REQUEST_METHOD'];
+$input = json_decode(file_get_contents("php://input"), true);
+
+switch($method){
+    case "GET":
+        $stmt = $pdo->query("SELECT * FROM board ORDER BY id DESC LIMIT 1");
+        echo json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+        break;
+    case "POST":
+        if($user->role !== 'teacher'){ http_response_code(403); exit; }
+        $content = $input['content'] ?? '';
+        if(!$content){ http_response_code(400); exit; }
+        $stmt = $pdo->prepare("INSERT INTO board (content) VALUES (?)");
+        $stmt->execute([$content]);
+        echo json_encode(["id"=>$pdo->lastInsertId(),"content"=>$content]);
+        break;
+    default:
+        http_response_code(405);
+}

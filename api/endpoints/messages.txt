@@ -1,0 +1,23 @@
+<?php
+require_once __DIR__ . '/../config.php';
+$user = authenticate($secretKey);
+$method = $_SERVER['REQUEST_METHOD'];
+$input = json_decode(file_get_contents("php://input"), true);
+
+switch($method){
+    case "GET":
+        $last_id = $_GET['last_id'] ?? 0;
+        $stmt = $pdo->prepare("SELECT m.id, m.text, u.name, m.created_at FROM messages m JOIN users u ON m.user_id=u.id WHERE m.id > ? ORDER BY m.id ASC");
+        $stmt->execute([$last_id]);
+        echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        break;
+    case "POST":
+        $text = $input['text'] ?? '';
+        if(!$text){ http_response_code(400); exit; }
+        $stmt = $pdo->prepare("INSERT INTO messages (user_id, text) VALUES (?,?)");
+        $stmt->execute([$user->sub, $text]);
+        echo json_encode(["status"=>"ok"]);
+        break;
+    default:
+        http_response_code(405);
+}
