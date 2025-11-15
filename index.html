@@ -7,129 +7,181 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-    background-color: #f0f2f5;
-    font-family: 'Segoe UI', sans-serif;
-}
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-/* ===== SIDEBAR ===== */
-.sidebar {
-    min-height: 100vh;
-    background: #222831;
-    color: #ffffff;
-    padding-top: 25px;
-    border-right: 3px solid #00adb5;
-}
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            min-height: 100vh;
+            background: #222831;
+            color: #ffffff;
+            padding-top: 25px;
+            border-right: 3px solid #00adb5;
+        }
 
-.sidebar h4 {
-    text-align: center;
-    margin-bottom: 25px;
-    font-weight: 600;
-    font-size: 20px;
-    color: #00e0ff;
-    text-shadow: 0 0 5px rgba(0,225,255,0.5);
-}
+        .sidebar h4 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 40px;
+            color: #00e0ff;
+            text-shadow: 0 0 5px rgba(0,225,255,0.5);
+        }
 
-/* Linki menu */
-.sidebar a {
-    display: block;
-    padding: 12px 18px;
-    margin: 6px 10px;
-    border-radius: 8px;
-    color: #eeeeee;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: 0.25s;
-    text-decoration: none;
-}
+        /* UŻYTKOWNIK – ten sam kolor co menu */
+        .sidebar h6 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 26px;
+            color: #00e0ff;
+            text-shadow: 0 0 5px rgba(0,225,255,0.5);
+        }
 
-.sidebar a:hover {
+        /* Linki menu */
+        .sidebar a {
+            display: block;
+            padding: 12px 18px;
+            margin: 6px 10px;
+            border-radius: 8px;
+            color: #eeeeee;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.25s;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background: #00adb5;
+            border-color: #00e0ff;
+            color: white;
+            transform: translateX(4px);
+        }
+
+        /* Formularz — neonowy styl */
+        .sidebar input,
+        .sidebar select {
+            margin-bottom: 12px;
+            background: #2b3038 !important;
+            border: 1px solid #00adb5;
+            color: #00e0ff !important;
+            transition: 0.25s ease;
+        }
+
+        .sidebar input::placeholder {
+            color: #7ad7e3;
+        }
+
+        /* ==== NEONOWY SELECT ==== */
+        .sidebar select {
+            appearance: none;
+            background: #2b3038 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2300e0ff'><polygon points='0,0 16,0 8,10'/></svg>") no-repeat right 10px center;
+            background-size: 14px;
+        }
+
+        .sidebar select option {
+            background: #2b3038;
+            color: #00e0ff;
+        }
+
+        /* Niestandardowy efekt hover na listę — maksymalny możliwy */
+        .sidebar select option:hover {
+            background: #00adb5 !important;
+            color: white !important;
+        }
+
+        /* Neonowy hover */
+        .sidebar input:hover,
+        .sidebar select:hover {
+            background: #373c45;
+            border-color: #00e0ff;
+            box-shadow: 0 0 15px rgba(0, 224, 255, 0.9), 0 0 25px rgba(0, 224, 255, 0.6);
+        }
+
+        /* Fokus (pisanie) */
+        .sidebar input:focus,
+        .sidebar select:focus {
+            background: #373c45 !important;
+            color: #00e0ff !important;
+            border-color: #00e0ff;
+            box-shadow: 0 0 12px rgba(0, 224, 255, 0.8);
+        }
+
+        /* ===== GŁÓWNA ZAWARTOŚĆ ===== */
+        h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #00adb5;
+            text-shadow: 0 0 8px rgba(0,200,255,0.4);
+        }
+
+        .card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 0 15px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        textarea, input, select {
+            border-radius: 10px !important;
+            background: #ffffff;
+            color: #222;
+        }
+
+        textarea::placeholder {
+            color: #777 !important;
+        }
+
+        #chat-box {
+            height: 300px;
+            overflow-y: auto;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Neonowy przycisk Zaloguj */
+.sidebar button.btn-primary {
     background: #00adb5;
-    border-color: #00e0ff;
-    color: white;
-    transform: translateX(4px);
-}
-
-/* Formularz — mocniejszy efekt hover */
-.sidebar input,
-.sidebar select {
-    margin-bottom: 12px;
-    background: #2b3038;
-    border: 1px solid #00adb5;
-    color: #ffffff;
+    border: 1px solid #00e0ff;
+    color: #e6ffff !important;   /* NOWY KOLOR NAPISU */
+    text-shadow: 0 0 6px rgba(0, 255, 255, 0.9);  /* neonowy blask */
+    box-shadow: 0 0 12px rgba(0, 224, 255, 0.6);
     transition: 0.25s ease;
 }
 
-/* Mocniejszy neonowy cień przy najechaniu */
-.sidebar input:hover,
-.sidebar select:hover {
-    background: #373c45;        /* ciemniejszy grafit */
-    border-color: #00e0ff;      /* jaśniejszy turkus */
-    box-shadow: 0 0 15px rgba(0, 224, 255, 0.9), 0 0 25px rgba(0, 224, 255, 0.6);
+/* Mocniejszy neon po najechaniu */
+.sidebar button.btn-primary:hover {
+    background: #00e0ff;
+    color: white !important;
+    text-shadow: 0 0 10px rgba(255,255,255,1);
+    border-color: #8fffff;
+    box-shadow: 0 0 18px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 255, 255, 0.8);
+    transform: translateY(-2px);
 }
 
-/* Placeholder bardziej czytelny */
-.sidebar input::placeholder {
-    color: #cccccc;
-}
 
-/* ===== GŁÓWNA ZAWARTOŚĆ ===== */
-h2 {
-    font-size: 32px;
-    font-weight: 700;
-    color: #00adb5;
-    text-shadow: 0 0 8px rgba(0,200,255,0.4);
-}
-
-/* Karty */
-.card {
-    border-radius: 12px;
-    border: none;
-    box-shadow: 0 0 15px rgba(0,0,0,0.15);
-}
-
-.card-header {
-    font-size: 18px;
-    font-weight: 600;
-    border-radius: 12px 12px 0 0 !important;
-}
-
-/* Pola tekstowe */
-textarea, input, select {
-    border-radius: 10px !important;
-    background: #ffffff;
-    color: #222;
-}
-
-textarea::placeholder {
-    color: #777 !important;
-}
-
-/* Czatu */
-#chat-box {
-    height: 300px;
-    overflow-y: auto;
-    background: #ffffff;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-/* Sekcje */
-.content-section {
-    display: none;
-    animation: fadeIn 0.25s ease;
-}
-
-.content-section.active {
-    display: block;
-}
-
-/* ANIMACJA */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-    </style>
+</style>
 </head>
 <body>
 <div class="container-fluid">
@@ -141,14 +193,17 @@ textarea::placeholder {
             <a href="#section-chat">💭 Czat grupowy</a>
             <a href="#section-notes">📝 Prywatne notatki</a>
             <hr>
-            <h6 class="text-center">Użytkownik</h6>
+            <h6>Użytkownik</h6>
             <div class="px-3">
                 <input type="text" class="form-control mb-2" placeholder="Login">
-                <input type="text" class="form-control mb-2" placeholder="Hasło">
+                <input type="password" class="form-control mb-2" placeholder="Hasło">
+
+                <!-- NEONOWY SELECT -->
                 <select class="form-select mb-2">
                     <option>Uczeń</option>
                     <option>Nauczyciel</option>
                 </select>
+
                 <button class="btn btn-primary w-100">Zaloguj</button>
             </div>
         </aside>
