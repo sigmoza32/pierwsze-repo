@@ -21,6 +21,7 @@ body {
     padding-top: 25px;
     border-right: 3px solid #00adb5;
 }
+
 .panel-lewy h4, .panel-lewy h6 { text-align: center; }
 .panel-lewy h4 {
     margin-bottom: 25px;
@@ -29,6 +30,7 @@ body {
     color: #00e0ff;
     text-shadow: 0 0 5px rgba(0,225,255,0.5);
 }
+
 .panel-lewy h6 {
     margin-bottom: 15px;
     font-weight: 600;
@@ -36,6 +38,7 @@ body {
     color: #00e0ff;
     text-shadow: 0 0 5px rgba(0,225,255,0.5);
 }
+
 .panel-lewy a {
     display: block;
     padding: 12px 18px;
@@ -47,6 +50,7 @@ body {
     transition: 0.25s;
     text-decoration: none;
 }
+
 .panel-lewy a:hover {
     background: #00adb5;
     border-color: #00e0ff;
@@ -64,18 +68,30 @@ body {
     transition: 0.25s ease;
     border-radius: 10px;
 }
-.panel-lewy input::placeholder { color: #7ad7e3; }
+
+.panel-lewy input::placeholder { 
+    color: #7ad7e3; 
+}
+
 .panel-lewy select {
     appearance: none;
     background: #2b3038 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2300e0ff'><polygon points='0,0 16,0 8,10'/></svg>") no-repeat right 10px center;
     background-size: 14px;
 }
-.panel-lewy select option { background: #2b3038; color: #00e0ff; }
-.panel-lewy input:hover, .panel-lewy select:hover {
-    background: #373c45;
-    border-color: #00e0ff;
-    box-shadow: 0 0 12px rgba(0, 224, 255, 0.9);
+
+.panel-lewy select option { 
+    background: #2b3038; 
+    color: #00e0ff; 
 }
+
+.panel-lewy input:hover, .panel-lewy select:hover {
+    background: #3f4650;
+    border-color: #00f0ff;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 1);
+    
+    
+}
+
 .panel-lewy input:focus, .panel-lewy select:focus {
     background: #373c45 !important;
     color: #00e0ff !important;
@@ -92,6 +108,7 @@ body {
     border-radius: 10px;
     transition: 0.25s ease, transform 0.25s ease;
 }
+
 .przycisk-logowania:hover {
     background: #00e0ff;
     color: #ffffff !important;
@@ -114,7 +131,11 @@ main.po-zalogowaniu {
     border-radius: 12px;
     color: #d0f9ff;
 }
-main.po-zalogowaniu h2 { color: #9dfcff; text-shadow: 0 0 12px #00eaff; }
+main.po-zalogowaniu h2 { 
+    color: #9dfcff; 
+    text-shadow: 0 0 12px #00eaff; 
+}
+
 main.po-zalogowaniu textarea {
     background: #00202a;
     color: #d0f9ff;
@@ -124,8 +145,14 @@ main.po-zalogowaniu textarea:focus {
     box-shadow: 0 0 14px #00eaff;
 }
 
-.blok-tresci { display: none; }
-.blok-tresci.aktywne { display: block; }
+.blok-tresci { 
+    display: none; 
+}
+
+.blok-tresci.aktywne { 
+    display: block; 
+    
+}
 </style>
 </head>
 <body>
