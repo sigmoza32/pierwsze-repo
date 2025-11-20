@@ -1,45 +1,46 @@
-//notatki
-document.querySelector('a[data-target="section-notes"]').addEventListener("click", function (e) {
+// Kliknięcie w "Notatki"
+document.querySelector('a[data-target="sekcja-notatki"]').addEventListener("click", function (e) {
     e.preventDefault();
 
-    // Ukryj wszystkie sekcje
-    document.querySelectorAll(".content-section").forEach(sec => {
-        sec.classList.remove("active");
+    document.querySelectorAll(".sekcja").forEach(sec => {
+        sec.classList.remove("widoczna");
     });
 
-    // Pokaż sekcję notatek
     const target = this.getAttribute("data-target");
-    document.getElementById(target).classList.add("active");
+    document.getElementById(target).classList.add("widoczna");
 });
 
-// Funkcja sprawdzająca, czy użytkownik jest zalogowany
+
+// Sprawdzenie loginu
 function isLoggedIn() {
-    const login = document.querySelector('.sidebar input[type="text"]').value.trim();
-    const haslo = document.querySelector('.sidebar input[type="password"]').value.trim();
-    const role = document.querySelector('.sidebar select').value;
+    const login = document.querySelector('.panel-boczny input[type="text"]').value.trim();
+    const haslo = document.querySelector('.panel-boczny input[type="password"]').value.trim();
+    const role = document.querySelector('.panel-boczny select').value;
+
     return login !== "" && haslo !== "" && role !== "";
 }
 
-// Obsługa kliknięcia w przycisk "Zaloguj"
-document.querySelector('.btn-login').addEventListener('click', function() {
-    const main = document.getElementById('main-content');
 
-    if(isLoggedIn()) {
+// Logowanie
+document.querySelector('.btn-zaloguj').addEventListener('click', function() {
+    const main = document.getElementById('glowna-zawartosc');
+
+    if (isLoggedIn()) {
         main.classList.add('logged-in');
 
         main.innerHTML = `
-            <section id="section-board" class="content-section active">
+            <section id="sekcja-tablica" class="sekcja widoczna">
                 <h2>📋 Tablica nauczyciela</h2>
                 <textarea class="form-control" rows="6"></textarea>
-                <button class="btn btn-login mt-3">Zapisz tablicę</button>
+                <button class="btn btn-success mt-3">Zapisz tablicę</button>
             </section>
 
-            <section id="section-chat" class="content-section">
+            <section id="sekcja-czat" class="sekcja">
                 <h2>💭 Czat grupowy</h2>
                 <p>Tu pojawi się czat.</p>
             </section>
 
-            <section id="section-notes" class="content-section">
+            <section id="sekcja-notatki" class="sekcja">
                 <h2>📝 Notatki</h2>
                 <textarea class="form-control" rows="6"></textarea>
             </section>
@@ -49,28 +50,26 @@ document.querySelector('.btn-login').addEventListener('click', function() {
     }
 });
 
-// Obsługa kliknięcia w menu
-document.querySelectorAll('.sidebar a').forEach(link => {
+
+// Klikanie w menu
+document.querySelectorAll('.panel-boczny a').forEach(link => {
     link.addEventListener('click', function(e) {
         e.preventDefault();
         const target = this.getAttribute('data-target');
-        const main = document.getElementById('main-content');
+        const main = document.getElementById('glowna-zawartosc');
 
-        // Ukryj wszystkie sekcje
-        main.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+        main.querySelectorAll('.sekcja').forEach(sec => sec.classList.remove('widoczna'));
 
-        // Jeśli nie zalogowany → pokaż tylko "Zaloguj się" dla wszystkich sekcji
-        if(!main.classList.contains('logged-in')) {
+        if (!main.classList.contains('logged-in')) {
             main.innerHTML = `
-                <div class="content-box text-center">
+                <div class="blok-informacyjny text-center">
                     <h2>🔒 Zaloguj się</h2>
                     <p>Aby zobaczyć tę sekcję, musisz się zalogować.</p>
                 </div>
             `;
         } else {
-            // Pokaż wybraną sekcję po zalogowaniu
             const section = document.getElementById(target);
-            if(section) section.classList.add('active');
+            if (section) section.classList.add('widoczna');
         }
     });
 });
