@@ -14,29 +14,29 @@ body {
 }
 
 /* SIDEBAR */
-.sidebar {
+.panel-lewy {
     min-height: 100vh;
     background: #222831;
     color: #ffffff;
     padding-top: 25px;
     border-right: 3px solid #00adb5;
 }
-.sidebar h4, .sidebar h6 { text-align: center; }
-.sidebar h4 {
+.panel-lewy h4, .panel-lewy h6 { text-align: center; }
+.panel-lewy h4 {
     margin-bottom: 25px;
     font-weight: 600;
     font-size: 40px;
     color: #00e0ff;
     text-shadow: 0 0 5px rgba(0,225,255,0.5);
 }
-.sidebar h6 {
+.panel-lewy h6 {
     margin-bottom: 15px;
     font-weight: 600;
     font-size: 26px;
     color: #00e0ff;
     text-shadow: 0 0 5px rgba(0,225,255,0.5);
 }
-.sidebar a {
+.panel-lewy a {
     display: block;
     padding: 12px 18px;
     margin: 6px 10px;
@@ -47,7 +47,7 @@ body {
     transition: 0.25s;
     text-decoration: none;
 }
-.sidebar a:hover {
+.panel-lewy a:hover {
     background: #00adb5;
     border-color: #00e0ff;
     color: white;
@@ -55,8 +55,8 @@ body {
 }
 
 /* neonowe inputy */
-.sidebar input,
-.sidebar select {
+.panel-lewy input,
+.panel-lewy select {
     margin-bottom: 12px;
     background: #2b3038 !important;
     border: 1px solid #00adb5;
@@ -64,19 +64,19 @@ body {
     transition: 0.25s ease;
     border-radius: 10px;
 }
-.sidebar input::placeholder { color: #7ad7e3; }
-.sidebar select {
+.panel-lewy input::placeholder { color: #7ad7e3; }
+.panel-lewy select {
     appearance: none;
     background: #2b3038 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2300e0ff'><polygon points='0,0 16,0 8,10'/></svg>") no-repeat right 10px center;
     background-size: 14px;
 }
-.sidebar select option { background: #2b3038; color: #00e0ff; }
-.sidebar input:hover, .sidebar select:hover {
+.panel-lewy select option { background: #2b3038; color: #00e0ff; }
+.panel-lewy input:hover, .panel-lewy select:hover {
     background: #373c45;
     border-color: #00e0ff;
     box-shadow: 0 0 12px rgba(0, 224, 255, 0.9);
 }
-.sidebar input:focus, .sidebar select:focus {
+.panel-lewy input:focus, .panel-lewy select:focus {
     background: #373c45 !important;
     color: #00e0ff !important;
     border-color: #00e0ff;
@@ -84,7 +84,7 @@ body {
 }
 
 /* neonowy przycisk */
-.btn-login {
+.przycisk-logowania {
     background: #00adb5;
     border: 1px solid #00e0ff;
     color: #e6ffff !important;
@@ -92,7 +92,7 @@ body {
     border-radius: 10px;
     transition: 0.25s ease, transform 0.25s ease;
 }
-.btn-login:hover {
+.przycisk-logowania:hover {
     background: #00e0ff;
     color: #ffffff !important;
     text-shadow: 0 0 12px rgba(255, 255, 255, 1);
@@ -104,37 +104,38 @@ body {
 /* PRAWA STRONA */
 main {
     min-height: 100vh;
-    background-color: #000; /* czarne tło początkowo */
+    background-color: #000;
     padding: 25px;
 }
-main.logged-in {
+main.po-zalogowaniu {
     background: linear-gradient(180deg, #001018, #001a26, #002b3d);
     border: 2px solid #00eaff;
     box-shadow: 0 0 15px #00eaff;
     border-radius: 12px;
     color: #d0f9ff;
 }
-main.logged-in h2 { color: #9dfcff; text-shadow: 0 0 12px #00eaff; }
-main.logged-in textarea {
+main.po-zalogowaniu h2 { color: #9dfcff; text-shadow: 0 0 12px #00eaff; }
+main.po-zalogowaniu textarea {
     background: #00202a;
     color: #d0f9ff;
     border: 1px solid #00eaff;
 }
-main.logged-in textarea:focus {
+main.po-zalogowaniu textarea:focus {
     box-shadow: 0 0 14px #00eaff;
 }
-.content-section { display: none; }
-.content-section.active { display: block; }
+
+.blok-tresci { display: none; }
+.blok-tresci.aktywne { display: block; }
 </style>
 </head>
 <body>
 <div class="container-fluid">
     <div class="row">
-        <aside class="col-md-3 col-lg-2 sidebar">
+        <aside class="col-md-3 col-lg-2 panel-lewy">
             <h4>Menu</h4>
-            <a data-target="section-board">📋 Tablica nauczyciela</a>
-            <a data-target="section-chat">💭 Czat grupowy</a>
-            <a data-target="section-notes">📝 Prywatne notatki</a>
+            <a data-przejdz="sekcja-tablica">📋 Tablica nauczyciela</a>
+            <a data-przejdz="sekcja-czat">💭 Czat grupowy</a>
+            <a data-przejdz="sekcja-notatki">📝 Prywatne notatki</a>
             <hr>
             <h6>Użytkownik</h6>
             <div class="px-3">
@@ -144,12 +145,11 @@ main.logged-in textarea:focus {
                     <option>Uczeń</option>
                     <option>Nauczyciel</option>
                 </select>
-                <button class="btn btn-login w-100 mt-2">Zaloguj</button>
+                <button class="btn przycisk-logowania w-100 mt-2">Zaloguj</button>
             </div>
         </aside>
 
-        <main id="main-content" class="col-md-9 col-lg-10 p-4">
-            <!-- Początkowo tylko czarne tło -->
+        <main id="panel-glowny" class="col-md-9 col-lg-10 p-4">
         </main>
     </div>
 </div>

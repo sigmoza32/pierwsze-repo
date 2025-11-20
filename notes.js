@@ -1,31 +1,29 @@
-// Funkcja sprawdzająca, czy użytkownik jest zalogowany
 function isLoggedIn() {
-    const login = document.querySelector('.sidebar input[type="text"]').value.trim();
-    const haslo = document.querySelector('.sidebar input[type="password"]').value.trim();
-    const role = document.querySelector('.sidebar select').value;
+    const login = document.querySelector('.panel-lewy input[type="text"]').value.trim();
+    const haslo = document.querySelector('.panel-lewy input[type="password"]').value.trim();
+    const role = document.querySelector('.panel-lewy select').value;
     return login !== "" && haslo !== "" && role !== "";
 }
 
-// Obsługa kliknięcia w przycisk "Zaloguj"
-document.querySelector('.btn-login').addEventListener('click', function() {
-    const main = document.getElementById('main-content');
+document.querySelector('.przycisk-logowania').addEventListener('click', function() {
+    const main = document.getElementById('panel-glowny');
 
     if(isLoggedIn()) {
-        main.classList.add('logged-in');
+        main.classList.add('po-zalogowaniu');
 
         main.innerHTML = `
-            <section id="section-board" class="content-section active">
+            <section id="sekcja-tablica" class="blok-tresci aktywne">
                 <h2>📋 Tablica nauczyciela</h2>
                 <textarea class="form-control" rows="6"></textarea>
-                <button class="btn btn-login mt-3">Zapisz tablicę</button>
+                <button class="btn przycisk-logowania mt-3">Zapisz tablicę</button>
             </section>
 
-            <section id="section-chat" class="content-section">
+            <section id="sekcja-czat" class="blok-tresci">
                 <h2>💭 Czat grupowy</h2>
                 <p>Tu pojawi się czat.</p>
             </section>
 
-            <section id="section-notes" class="content-section">
+            <section id="sekcja-notatki" class="blok-tresci">
                 <h2>📝 Notatki</h2>
                 <textarea class="form-control" rows="6"></textarea>
             </section>
@@ -35,18 +33,15 @@ document.querySelector('.btn-login').addEventListener('click', function() {
     }
 });
 
-// Obsługa kliknięcia w menu
-document.querySelectorAll('.sidebar a').forEach(link => {
+document.querySelectorAll('.panel-lewy a').forEach(link => {
     link.addEventListener('click', function(e) {
         e.preventDefault();
-        const target = this.getAttribute('data-target');
-        const main = document.getElementById('main-content');
+        const target = this.getAttribute('data-przejdz');
+        const main = document.getElementById('panel-glowny');
 
-        // Ukryj wszystkie sekcje
-        main.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+        main.querySelectorAll('.blok-tresci').forEach(sec => sec.classList.remove('aktywne'));
 
-        // Jeśli nie zalogowany → pokaż tylko "Zaloguj się" dla wszystkich sekcji
-        if(!main.classList.contains('logged-in')) {
+        if(!main.classList.contains('po-zalogowaniu')) {
             main.innerHTML = `
                 <div class="content-box text-center">
                     <h2>🔒 Zaloguj się</h2>
@@ -54,9 +49,8 @@ document.querySelectorAll('.sidebar a').forEach(link => {
                 </div>
             `;
         } else {
-            // Pokaż wybraną sekcję po zalogowaniu
             const section = document.getElementById(target);
-            if(section) section.classList.add('active');
+            if(section) section.classList.add('aktywne');
         }
     });
 });
