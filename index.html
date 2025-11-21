@@ -4,183 +4,125 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aplikacja lekcyjna</title>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <style>
+:root {
+    --bg-dark: #0f0f10;
+    --sidebar-bg: #222831;
+    --turquoise: #00e0ff;
+    --turquoise-dark: #00adb5;
+    --text-light: #e6ffff;
+}
+
+/* Body */
 body {
-    background-color: #0f0f10;
-    font-family: 'Segoe UI', sans-serif;
-    color: #e6ffff;
-    margin: 0;
+    background: var(--bg-dark);
+    color: var(--text-light);
 }
 
-/* SIDEBAR */
-.panel-lewy {
-    min-height: 100vh;
-    background: #222831;
-    color: #ffffff;
-    padding-top: 25px;
-    border-right: 3px solid #00adb5;
+/* Sidebar */
+.sidebar {
+    background: var(--sidebar-bg);
+    border-right: 3px solid var(--turquoise-dark);
 }
 
-.panel-lewy h4, .panel-lewy h6 { text-align: center; }
-.panel-lewy h4 {
-    margin-bottom: 25px;
-    font-weight: 600;
-    font-size: 40px;
-    color: #00e0ff;
-    text-shadow: 0 0 5px rgba(0,225,255,0.5);
+/* Hover link */
+.sidebar a:hover {
+    background: var(--turquoise-dark) !important;
 }
 
-.panel-lewy h6 {
-    margin-bottom: 15px;
-    font-weight: 600;
-    font-size: 26px;
-    color: #00e0ff;
-    text-shadow: 0 0 5px rgba(0,225,255,0.5);
-}
-
-.panel-lewy a {
-    display: block;
-    padding: 12px 18px;
-    margin: 6px 10px;
-    border-radius: 8px;
-    color: #eeeeee;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: 0.25s;
-    text-decoration: none;
-}
-
-.panel-lewy a:hover {
-    background: #00adb5;
-    border-color: #00e0ff;
-    color: white;
-    transform: translateX(4px);
-}
-
-/* neonowe inputy */
-.panel-lewy input,
-.panel-lewy select {
-    margin-bottom: 12px;
-    background: #2b3038 !important;
-    border: 1px solid #00adb5;
-    color: #00e0ff !important;
-    transition: 0.25s ease;
-    border-radius: 10px;
-}
-
-.panel-lewy input::placeholder { 
-    color: #7ad7e3; 
-}
-
-.panel-lewy select {
-    appearance: none;
-    background: #2b3038 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2300e0ff'><polygon points='0,0 16,0 8,10'/></svg>") no-repeat right 10px center;
-    background-size: 14px;
-}
-
-.panel-lewy select option { 
-    background: #2b3038; 
-    color: #00e0ff; 
-}
-
-.panel-lewy input:hover, .panel-lewy select:hover {
-    background: #3f4650;
-    border-color: #00f0ff;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 1);
-    
-    
-}
-
-.panel-lewy input:focus, .panel-lewy select:focus {
-    background: #373c45 !important;
-    color: #00e0ff !important;
-    border-color: #00e0ff;
-    box-shadow: 0 0 12px rgba(0, 224, 255, 0.8);
-}
-
-/* neonowy przycisk */
-.przycisk-logowania {
-    background: #00adb5;
-    border: 1px solid #00e0ff;
-    color: #e6ffff !important;
-    text-shadow: 0 0 6px rgba(0, 255, 255, 0.9);
-    border-radius: 10px;
-    transition: 0.25s ease, transform 0.25s ease;
-}
-
-.przycisk-logowania:hover {
-    background: #00e0ff;
-    color: #ffffff !important;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 1);
-    border-color: #8fffff;
-    box-shadow: 0 0 25px rgba(0, 255, 255, 1), 0 0 40px rgba(0, 255, 255, 0.8);
-    transform: translateY(-2px);
-}
-
-/* PRAWA STRONA */
-main {
-    min-height: 100vh;
-    background-color: #000;
-    padding: 25px;
-}
-main.po-zalogowaniu {
+/* Main panel */
+.main-area {
     background: linear-gradient(180deg, #001018, #001a26, #002b3d);
-    border: 2px solid #00eaff;
-    box-shadow: 0 0 15px #00eaff;
+    border: 2px solid var(--turquoise);
+    box-shadow: 0 0 15px var(--turquoise);
     border-radius: 12px;
-    color: #d0f9ff;
-}
-main.po-zalogowaniu h2 { 
-    color: #9dfcff; 
-    text-shadow: 0 0 12px #00eaff; 
+    min-height: 100vh;
 }
 
-main.po-zalogowaniu textarea {
-    background: #00202a;
-    color: #d0f9ff;
-    border: 1px solid #00eaff;
-}
-main.po-zalogowaniu textarea:focus {
-    box-shadow: 0 0 14px #00eaff;
+/* Placeholder */
+::placeholder {
+    color: #7eeaff !important;
+    opacity: 1;
 }
 
+/* Sekcje */
 .blok-tresci { 
-    display: none; 
-}
+    display: none;
+ }
 
 .blok-tresci.aktywne { 
     display: block; 
-    
+}
+
+/* Inputy i selecty */
+.panel-lewy input,
+.panel-lewy select {
+    transition: 0.3s ease, box-shadow 0.3s ease;
+    color: #7eeaff;
+}
+
+.panel-lewy input:hover,
+.panel-lewy input:focus,
+.panel-lewy select:hover,
+.panel-lewy select:focus {
+    box-shadow: 0 0 12px var(--turquoise);
+}
+
+/* Przycisk zaloguj */
+.przycisk-logowania {
+    transition: 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.przycisk-logowania:hover {
+    box-shadow: 0 0 20px var(--turquoise), 0 0 30px var(--turquoise-dark);
+    transform: translateY(-2px);
 }
 </style>
 </head>
 <body>
+
 <div class="container-fluid">
-    <div class="row">
-        <aside class="col-md-3 col-lg-2 panel-lewy">
-            <h4>Menu</h4>
-            <a data-przejdz="sekcja-tablica">📋 Tablica nauczyciela</a>
-            <a data-przejdz="sekcja-czat">💭 Czat grupowy</a>
-            <a data-przejdz="sekcja-notatki">📝 Prywatne notatki</a>
-            <hr>
-            <h6>Użytkownik</h6>
-            <div class="px-3">
-                <input type="text" class="form-control mb-2" placeholder="Login">
-                <input type="password" class="form-control mb-2" placeholder="Hasło">
-                <select class="form-select mb-2">
+    <div class="row g-0">
+
+        <!-- LEWY PANEL -->
+        <aside class="col-md-3 col-lg-2 sidebar panel-lewy text-light p-4">
+
+            <h4 class="text-center fw-bold mb-4 display-5" style="color: var(--turquoise);">Menu</h4>
+
+            <nav class="nav flex-column mb-4">
+                <a class="nav-link text-light border rounded-3 mb-2 px-3 py-2" data-przejdz="sekcja-tablica">📋 Tablica nauczyciela</a>
+                <a class="nav-link text-light border rounded-3 mb-2 px-3 py-2" data-przejdz="sekcja-czat">💭 Czat grupowy</a>
+                <a class="nav-link text-light border rounded-3 mb-2 px-3 py-2" data-przejdz="sekcja-notatki">📝 Prywatne notatki</a>
+            </nav>
+
+            <h6 class="text-center fw-bold mb-3 fs-2" style="color: var(--turquoise);">Użytkownik</h6>
+
+            <div>
+                <input type="text" class="form-control rounded-3 mb-2 bg-dark text-light border-info" placeholder="Login">
+                <input type="password" class="form-control rounded-3 mb-2 bg-dark text-light border-info" placeholder="Hasło">
+                <select class="form-select rounded-3 mb-2 bg-dark text-light border-info">
+                    <option selected disabled>Wybierz rolę...</option>
                     <option>Uczeń</option>
                     <option>Nauczyciel</option>
                 </select>
-                <button class="btn przycisk-logowania w-100 mt-2">Zaloguj</button>
+
+                <button class="btn w-100 mt-2 text-light rounded-3 przycisk-logowania" style="background: var(--turquoise-dark); border-color: var(--turquoise);">
+                    Zaloguj
+                </button>
             </div>
+
         </aside>
 
-        <main id="panel-glowny" class="col-md-9 col-lg-10 p-4">
-        </main>
+        <!-- PANEL GŁÓWNY -->
+        <main id="panel-glowny" class="col-md-9 col-lg-10 p-4 main-area"></main>
+
     </div>
 </div>
 
 <script src="notes.js"></script>
+
 </body>
 </html>
