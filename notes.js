@@ -2,8 +2,7 @@
 function isLoggedIn() {
     const login = document.querySelector('.panel-lewy input[type="text"]').value.trim();
     const haslo = document.querySelector('.panel-lewy input[type="password"]').value.trim();
-    const role = document.querySelector('.panel-lewy select').value;
-    return login !== "" && haslo !== "" && role !== "";
+    return login !== "" && haslo !== "";
 }
 
 // Kliknięcie ZALOGUJ
@@ -19,7 +18,10 @@ document.querySelector('.przycisk-logowania').addEventListener('click', function
                 <section id="sekcja-tablica" class="blok-tresci aktywne">
                     <h2>📋 Tablica nauczyciela</h2>
                     <textarea class="form-control rounded-3" rows="6"></textarea>
-                    <button class="btn mt-3 text-light rounded-3" style="background: var(--turquoise-dark); border-color: var(--turquoise);">Zapisz tablicę</button>
+                    <button class="btn mt-3 text-light rounded-3" 
+                            style="background: var(--turquoise-dark); border-color: var(--turquoise);">
+                        Zapisz tablicę
+                    </button>
                 </section>
 
                 <section id="sekcja-czat" class="blok-tresci">
@@ -33,17 +35,16 @@ document.querySelector('.przycisk-logowania').addEventListener('click', function
                 </section>
             `;
         } else {
-            // Jeśli już istnieją, pokaż pierwszą sekcję
             document.querySelectorAll('.blok-tresci').forEach(sec => sec.classList.remove('aktywne'));
             document.getElementById('sekcja-tablica').classList.add('aktywne');
         }
 
     } else {
-        alert("Wpisz login, hasło i wybierz rolę!");
+        alert("Wpisz login i hasło!");
     }
 });
 
-// Obsługa menu – delegacja po całym panelu
+// Obsługa menu – delegacja
 document.querySelector('.panel-lewy').addEventListener('click', function(e) {
     const link = e.target.closest('a[data-przejdz]');
     if (!link) return;

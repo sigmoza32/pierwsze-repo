@@ -16,24 +16,20 @@
     --text-light: #e6ffff;
 }
 
-/* Body */
 body {
     background: var(--bg-dark);
     color: var(--text-light);
 }
 
-/* Sidebar */
 .sidebar {
     background: var(--sidebar-bg);
     border-right: 3px solid var(--turquoise-dark);
 }
 
-/* Hover link */
 .sidebar a:hover {
     background: var(--turquoise-dark) !important;
 }
 
-/* Main panel */
 .main-area {
     background: linear-gradient(180deg, #001018, #001a26, #002b3d);
     border: 2px solid var(--turquoise);
@@ -42,36 +38,23 @@ body {
     min-height: 100vh;
 }
 
-/* Placeholder */
 ::placeholder {
     color: #7eeaff !important;
-    opacity: 1;
 }
 
-/* Sekcje */
-.blok-tresci { 
-    display: none;
- }
+.blok-tresci { display: none; }
+.blok-tresci.aktywne { display: block; }
 
-.blok-tresci.aktywne { 
-    display: block; 
-}
-
-/* Inputy i selecty */
-.panel-lewy input,
-.panel-lewy select {
+.panel-lewy input {
     transition: 0.3s ease, box-shadow 0.3s ease;
     color: #7eeaff;
 }
 
 .panel-lewy input:hover,
-.panel-lewy input:focus,
-.panel-lewy select:hover,
-.panel-lewy select:focus {
+.panel-lewy input:focus {
     box-shadow: 0 0 12px var(--turquoise);
 }
 
-/* Przycisk zaloguj */
 .przycisk-logowania {
     transition: 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
 }
@@ -103,13 +86,9 @@ body {
             <div>
                 <input type="text" class="form-control rounded-3 mb-2 bg-dark text-light border-info" placeholder="Login">
                 <input type="password" class="form-control rounded-3 mb-2 bg-dark text-light border-info" placeholder="Hasło">
-                <select class="form-select rounded-3 mb-2 bg-dark text-light border-info">
-                    <option selected disabled>Wybierz rolę...</option>
-                    <option>Uczeń</option>
-                    <option>Nauczyciel</option>
-                </select>
 
-                <button class="btn w-100 mt-2 text-light rounded-3 przycisk-logowania" style="background: var(--turquoise-dark); border-color: var(--turquoise);">
+                <button class="btn w-100 mt-2 text-light rounded-3 przycisk-logowania" 
+                        style="background: var(--turquoise-dark); border-color: var(--turquoise);">
                     Zaloguj
                 </button>
             </div>
@@ -123,6 +102,6 @@ body {
 </div>
 
 <script src="notes.js"></script>
-
+<script src="./js/app.js"></script>
 </body>
 </html>
