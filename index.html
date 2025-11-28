@@ -21,21 +21,25 @@ body {
     color: var(--text-light);
 }
 
+/* LEWY PANEL */
 .sidebar {
     background: var(--sidebar-bg);
     border-right: 3px solid var(--turquoise-dark);
+    min-height: 100vh;
+    overflow-y: auto;
 }
 
 .sidebar a:hover {
     background: var(--turquoise-dark) !important;
 }
 
+/* GŁÓWNY PANEL */
 .main-area {
     background: linear-gradient(180deg, #001018, #001a26, #002b3d);
     border: 2px solid var(--turquoise);
     box-shadow: 0 0 15px var(--turquoise);
     border-radius: 12px;
-    min-height: 100vh;
+    min-height: calc(100vh - 20px);
 }
 
 ::placeholder {
@@ -63,6 +67,40 @@ body {
     box-shadow: 0 0 20px var(--turquoise), 0 0 30px var(--turquoise-dark);
     transform: translateY(-2px);
 }
+
+/* --- RESPONSYWNOŚĆ --- */
+@media (max-width: 768px) {
+
+    .sidebar {
+        border-right: none;
+        border-bottom: 3px solid var(--turquoise-dark);
+        min-height: auto;
+        padding: 1.5rem !important;
+    }
+
+    h4.display-5 {
+        font-size: 1.8rem;
+    }
+
+    .nav-link {
+        font-size: 1rem;
+        padding: 10px 14px !important;
+    }
+
+    .panel-lewy input {
+        font-size: 1rem;
+    }
+
+    .przycisk-logowania {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .main-area {
+        margin-top: 20px;
+        min-height: auto;
+    }
+}
 </style>
 </head>
 <body>
@@ -71,9 +109,11 @@ body {
     <div class="row g-0">
 
         <!-- LEWY PANEL -->
-        <aside class="col-md-3 col-lg-2 sidebar panel-lewy text-light p-4">
+        <aside class="col-12 col-md-3 col-lg-2 sidebar panel-lewy text-light p-4">
 
-            <h4 class="text-center fw-bold mb-4 display-5" style="color: var(--turquoise);">Menu</h4>
+            <h4 class="text-center fw-bold mb-4 display-5" style="color: var(--turquoise);">
+                Menu
+            </h4>
 
             <nav class="nav flex-column mb-4">
                 <a class="nav-link text-light border rounded-3 mb-2 px-3 py-2" data-przejdz="sekcja-tablica">📋 Tablica nauczyciela</a>
@@ -81,7 +121,9 @@ body {
                 <a class="nav-link text-light border rounded-3 mb-2 px-3 py-2" data-przejdz="sekcja-notatki">📝 Prywatne notatki</a>
             </nav>
 
-            <h6 class="text-center fw-bold mb-3 fs-2" style="color: var(--turquoise);">Użytkownik</h6>
+            <h6 class="text-center fw-bold mb-3 fs-2" style="color: var(--turquoise);">
+                Użytkownik
+            </h6>
 
             <div>
                 <input type="text" class="form-control rounded-3 mb-2 bg-dark text-light border-info" placeholder="Login">
@@ -96,7 +138,9 @@ body {
         </aside>
 
         <!-- PANEL GŁÓWNY -->
-        <main id="panel-glowny" class="col-md-9 col-lg-10 p-4 main-area"></main>
+        <main id="panel-glowny" class="col-12 col-md-9 col-lg-10 p-4 main-area">
+            <!-- Tu JavaScript wstawi treść -->
+        </main>
 
     </div>
 </div>
