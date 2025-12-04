@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Czat + Tablica + Notatki</title>
-<script src="app.js"></script>
+<script src="app.js" defer></script>
 </head>
 <body>
 
@@ -17,32 +17,33 @@
 
 <hr>
 
-<h2>Czat główny</h2>
-<div id="chatOutput" style="border:1px solid #000; height:150px; overflow:auto;"></div>
+<!-- CZAT -->
+<div id="chatSection" style="display:none;">
+    <h2>Czat główny</h2>
+    <div id="chatOutput" style="border:1px solid #000; height:150px; overflow:auto;"></div>
 
-<input id="msg" placeholder="Wpisz wiadomość">
-<button onclick="sendMessage()">Wyślij</button>
-
-<hr>
-
-<h2>Tablica nauczyciela</h2>
-<textarea id="board" style="width:300px; height:100px;"></textarea><br>
-<button onclick="setBoard()">Zapisz tablicę</button>
+    <input id="msg" placeholder="Wpisz wiadomość">
+    <button onclick="sendMessage()">Wyślij</button>
+</div>
 
 <hr>
 
-<h2>Notatki prywatne</h2>
-<textarea id="note" style="width:300px; height:100px;"></textarea><br>
-<button onclick="saveNote()">Zapisz notatkę</button>
+<!-- TABLICA -->
+<div id="boardSection" style="display:none;">
+    <h2>Tablica nauczyciela</h2>
+    <textarea id="board" style="width:300px; height:100px;"><br>
+    <button id="saveBoardBtn" onclick="setBoard()">Zapisz tablicę</button>
+</div>
 
-<script>
-// automatyczne odświeżanie — tylko odczyt (bez POST)
-setInterval(() => {
-    getMessages();  
-    getBoard();
-    getNote();
-}, 2000);
-</script>
+<hr>
+
+<!-- NOTATKI -->
+<div id="noteSection" style="display:none;">
+    <h2>Notatki prywatne</h2>
+    <textarea id="note" style="width:300px; height:100px;"></textarea><br>
+    <button onclick="saveNote()">Zapisz notatkę</button>
+</div>
 
 </body>
 </html>
+
