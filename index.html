@@ -126,10 +126,10 @@ body {
             </h6>
 
             <div>
-                <input type="text" class="form-control rounded-3 mb-2 bg-dark text-light border-info" placeholder="Login">
-                <input type="password" class="form-control rounded-3 mb-2 bg-dark text-light border-info" placeholder="Hasło">
+                <input type="text" class="form-control rounded-3 mb-2 bg-dark text-light border-info" placeholder="Login" id="loginName">
+                <input type="password" class="form-control rounded-3 mb-2 bg-dark text-light border-info" placeholder="Hasło" id="loginPass">
 
-                <button class="btn w-100 mt-2 text-light rounded-3 przycisk-logowania" 
+                <button onclick="login()" class="btn w-100 mt-2 text-light rounded-3 przycisk-logowania" 
                         style="background: var(--turquoise-dark); border-color: var(--turquoise);">
                     Zaloguj
                 </button>

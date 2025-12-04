@@ -17,8 +17,8 @@ document.querySelector('.przycisk-logowania').addEventListener('click', function
             main.innerHTML = `
                 <section id="sekcja-tablica" class="blok-tresci aktywne">
                     <h2>📋 Tablica nauczyciela</h2>
-                    <textarea class="form-control rounded-3" rows="6"></textarea>
-                    <button class="btn mt-3 text-light rounded-3" 
+                    <textarea class="form-control rounded-3" rows="6" id="board"></textarea>
+                    <button onclick="setBoard()" class="btn mt-3 text-light rounded-3" 
                             style="background: var(--turquoise-dark); border-color: var(--turquoise);">
                         Zapisz tablicę
                     </button>
@@ -27,11 +27,14 @@ document.querySelector('.przycisk-logowania').addEventListener('click', function
                 <section id="sekcja-czat" class="blok-tresci">
                     <h2>💭 Czat grupowy</h2>
                     <p>Tu pojawi się czat.</p>
+                    <div id="chatOutput" style="border:1px solid #fff; height:150px; overflow:auto;"></div>
+                    <input id="msg" placeholder="Wpisz wiadomość">
+                    <button onclick="sendMessage()">Wyślij</button>
                 </section>
 
                 <section id="sekcja-notatki" class="blok-tresci">
                     <h2>📝 Notatki</h2>
-                    <textarea class="form-control rounded-3" rows="6"></textarea>
+                    <textarea class="form-control rounded-3" rows="6" id="note"></textarea>
                 </section>
             `;
         } else {
