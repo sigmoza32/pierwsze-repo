@@ -2,120 +2,80 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Gify</title>
+    <title>Alonso</title>
+
+    <!-- 🔐 BLOKADA BEZ TOKENA -->
+    <script>
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Brak dostępu! Zaloguj się.");
+            window.location.href = "login.html";
+        }
+    </script>
 
     <style>
         body {
             margin: 0;
-            background: #111;
+            background: radial-gradient(circle, #000 20%, #020024 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            color: white;
+            font-family: Arial, sans-serif;
         }
 
-        #gif {
-            max-width: 95vw;
-            max-height: 80vh;
-            border-radius: 15px;
-            border: 5px solid;
-            margin-bottom: 20px;
-            transition: 0.4s;
+        h1 {
+            font-size: 60px;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff, 0 0 30px #00ffff;
         }
 
-        .buttons {
-            display: flex;
-            gap: 15px;
+        .panel {
+            margin-top: 40px;
+            background: rgba(0,0,0,0.6);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px #ff00ff;
+            text-align: center;
         }
 
         button {
-            padding: 10px 20px;
-            font-size: 18px;
+            margin-top: 20px;
+            padding: 10px 25px;
+            font-size: 16px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
-            background: #00c8ff;
-            color: black;
+            background: #00ffff;
             font-weight: bold;
         }
 
         button:hover {
-            background: #00a3cc;
+            background: #00c8cc;
         }
     </style>
 </head>
 <body>
 
-    <img id="gif" src="" alt="gif">
+    <h1>🔥 ALONSO 🔥</h1>
 
-    <div class="buttons">
-        <button onclick="prevGif()">⬅ Poprzedni</button>
-        <button onclick="losowyGif()">🎲 Losowy</button>
-        <button onclick="nextGif()">Następny ➡</button>
+    <div class="panel">
+        <p>✅ Ta strona wymaga tokena</p>
+        <p>✅ Jesteś poprawnie zalogowany</p>
+
+        <button onclick="wyloguj()">Wyloguj się</button>
     </div>
 
     <script>
-        const gify = [
-            "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMGI3MGI3MGIxMTJmNTk5YjowMnBwd0xHd05hMDFoMGRod3ZraTJtZyZlcD12MS4xLjI1/5BWx8ONNwNOwbHP0Dr/200.gif",
-            "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2U1MGI3MGIxMTJmNTk5YjowMnBwd0xHd05hMDFoMGRod3ZraTJtZyZlcD12MS4xLjI1/Mur6TbNr7PGXyNlPyR/200.gif",
-            "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2U1MGI3MGIxMTJmNTk5YjowMnBwd0xHd05hMDFoMGRod3ZraTJtZyZlcD12MS4xLjI1/4KF8EdNFw6oNsgle3n/200.gif",
-            "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2U1MGI3MGIxMTJmNTk5YjowMnBwd0xHd05hMDFoMGRod3ZraTJtZyZlcD12MS4xLjI1/3HFxwHayrUu2GhSsZ9/200.gif",
-            "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2U1MGI3MGIxMTJmNTk5YjowMnBwd0xHd05hMDFoMGRod3ZraTJtZyZlcD12MS4xLjI1/tJY68TKk9Y7qC1px08/200.gif"
-        ];
-
-        const neonKolory = [
-            "#00ffff", // cyan
-            "#ff00ff", // róż
-            "#39ff14", // zielony neon
-            "#ff073a", // czerwony neon
-            "#faff00"  // żółty neon
-        ];
-
-        let index = 0;
-        const img = document.getElementById("gif");
-
-        function pokazGifa() {
-            img.src = gify[index];
+        function wyloguj() {
+            localStorage.removeItem("token");
+            alert("Wylogowano!");
+            window.location.href = "login.html";
         }
-
-        function nextGif() {
-            index = (index + 1) % gify.length;
-            pokazGifa();
-        }
-
-        function prevGif() {
-            index = (index - 1 + gify.length) % gify.length;
-            pokazGifa();
-        }
-
-        function losowyGif() {
-            let nowy;
-            do {
-                nowy = Math.floor(Math.random() * gify.length);
-            } while (nowy === index);
-
-            index = nowy;
-            pokazGifa();
-        }
-
-        function zmienNeon() {
-            const kolor = neonKolory[Math.floor(Math.random() * neonKolory.length)];
-            img.style.borderColor = kolor;
-            img.style.boxShadow = `
-                0 0 25px ${kolor},
-                0 0 50px ${kolor},
-                0 0 80px ${kolor}
-            `;
-        }
-
-        // START
-        pokazGifa();
-        zmienNeon();
-
-        // auto zmiana ramki co 2 sekundy
-        setInterval(zmienNeon, 2000);
     </script>
 
 </body>
 </html>
+
