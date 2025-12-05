@@ -121,7 +121,7 @@ body {
                 <a class="nav-link text-light border rounded-3 mb-2 px-3 py-2" data-przejdz="sekcja-notatki">📝 Prywatne notatki</a>
             </nav>
 
-            <h6 class="text-center fw-bold mb-3 fs-2" style="color: var(--turquoise);">
+            <h6 class="text-center fw-bold mb-3 fs-2" style="color: var(--turquoise);" id="userInfo">
                 Użytkownik
             </h6>
 
@@ -129,9 +129,13 @@ body {
                 <input type="text" class="form-control rounded-3 mb-2 bg-dark text-light border-info" placeholder="Login" id="loginName">
                 <input type="password" class="form-control rounded-3 mb-2 bg-dark text-light border-info" placeholder="Hasło" id="loginPass">
 
-                <button onclick="login()" class="btn w-100 mt-2 text-light rounded-3 przycisk-logowania" 
+                <button id="btnLogin" onclick="login()" class="btn w-100 mt-2 text-light rounded-3 przycisk-logowania" 
                         style="background: var(--turquoise-dark); border-color: var(--turquoise);">
                     Zaloguj
+                </button>
+                <button id="btnLogout" onclick="login()" class="btn w-100 mt-2 text-light rounded-3 przycisk-logowania" 
+                        style="background: var(--turquoise-dark); border-color: var(--turquoise);">
+                    Wyloguj
                 </button>
             </div>
 
