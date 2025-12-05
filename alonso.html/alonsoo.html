@@ -1,4 +1,4 @@
-]<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
@@ -19,9 +19,9 @@
             max-width: 95vw;
             max-height: 80vh;
             border-radius: 15px;
-            border: 5px solid #00c8ff;
-            box-shadow: 0 0 25px #00c8ff, 0 0 50px #00c8ff;
+            border: 5px solid;
             margin-bottom: 20px;
+            transition: 0.4s;
         }
 
         .buttons {
@@ -51,6 +51,7 @@
 
     <div class="buttons">
         <button onclick="prevGif()">⬅ Poprzedni</button>
+        <button onclick="losowyGif()">🎲 Losowy</button>
         <button onclick="nextGif()">Następny ➡</button>
     </div>
 
@@ -61,6 +62,14 @@
             "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2U1MGI3MGIxMTJmNTk5YjowMnBwd0xHd05hMDFoMGRod3ZraTJtZyZlcD12MS4xLjI1/4KF8EdNFw6oNsgle3n/200.gif",
             "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2U1MGI3MGIxMTJmNTk5YjowMnBwd0xHd05hMDFoMGRod3ZraTJtZyZlcD12MS4xLjI1/3HFxwHayrUu2GhSsZ9/200.gif",
             "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2U1MGI3MGIxMTJmNTk5YjowMnBwd0xHd05hMDFoMGRod3ZraTJtZyZlcD12MS4xLjI1/tJY68TKk9Y7qC1px08/200.gif"
+        ];
+
+        const neonKolory = [
+            "#00ffff", // cyan
+            "#ff00ff", // róż
+            "#39ff14", // zielony neon
+            "#ff073a", // czerwony neon
+            "#faff00"  // żółty neon
         ];
 
         let index = 0;
@@ -80,11 +89,32 @@
             pokazGifa();
         }
 
-        // startowy gif
-        pokazGifa();
+        function losowyGif() {
+            let nowy;
+            do {
+                nowy = Math.floor(Math.random() * gify.length);
+            } while (nowy === index);
 
-        // ✅ AUTOPRZEWIJANIE CO 3 SEKUNDY (możesz usunąć jeśli nie chcesz)
-        setInterval(nextGif, 3000);
+            index = nowy;
+            pokazGifa();
+        }
+
+        function zmienNeon() {
+            const kolor = neonKolory[Math.floor(Math.random() * neonKolory.length)];
+            img.style.borderColor = kolor;
+            img.style.boxShadow = `
+                0 0 25px ${kolor},
+                0 0 50px ${kolor},
+                0 0 80px ${kolor}
+            `;
+        }
+
+        // START
+        pokazGifa();
+        zmienNeon();
+
+        // auto zmiana ramki co 2 sekundy
+        setInterval(zmienNeon, 2000);
     </script>
 
 </body>
