@@ -22,6 +22,15 @@
             box-shadow: 0 0 25px #00c8ff, 0 0 50px #00c8ff;
         }
     </style>
+
+   
+    <script>
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Brak dostępu! Zaloguj się.");
+            window.location.href = "login.html"; 
+        }
+    </script>
 </head>
 <body>
 
@@ -50,4 +59,3 @@
 
 </body>
 </html>
-
