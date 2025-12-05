@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+]<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +9,7 @@
             margin: 0;
             background: #111;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -16,25 +17,42 @@
 
         #gif {
             max-width: 95vw;
-            max-height: 95vh;
+            max-height: 80vh;
             border-radius: 15px;
             border: 5px solid #00c8ff;
             box-shadow: 0 0 25px #00c8ff, 0 0 50px #00c8ff;
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #00c8ff;
+            color: black;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #00a3cc;
         }
     </style>
-
-   
-    <script>
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("Brak dostępu! Zaloguj się.");
-            window.location.href = "login.html"; 
-        }
-    </script>
 </head>
 <body>
 
     <img id="gif" src="" alt="gif">
+
+    <div class="buttons">
+        <button onclick="prevGif()">⬅ Poprzedni</button>
+        <button onclick="nextGif()">Następny ➡</button>
+    </div>
 
     <script>
         const gify = [
@@ -48,13 +66,25 @@
         let index = 0;
         const img = document.getElementById("gif");
 
-        function zmienGifa() {
+        function pokazGifa() {
             img.src = gify[index];
-            index = (index + 1) % gify.length;
         }
 
-        zmienGifa();
-        setInterval(zmienGifa, 3000);
+        function nextGif() {
+            index = (index + 1) % gify.length;
+            pokazGifa();
+        }
+
+        function prevGif() {
+            index = (index - 1 + gify.length) % gify.length;
+            pokazGifa();
+        }
+
+        // startowy gif
+        pokazGifa();
+
+        // ✅ AUTOPRZEWIJANIE CO 3 SEKUNDY (możesz usunąć jeśli nie chcesz)
+        setInterval(nextGif, 3000);
     </script>
 
 </body>
