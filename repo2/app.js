@@ -61,7 +61,7 @@ async function login() {
         saveToken(data.token);
         currentUser = data.user;
 
-        userInfo.innerText = `${currentUser.name} (${currentUser.role})`;
+        userInfo.innerText = `${currentUser.name} `;
 
         showByRole(currentUser.role);
         loadAllOnce();
