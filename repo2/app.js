@@ -164,9 +164,13 @@ async function getMessages() {
 
     chatOutput.innerHTML = "";
 
-    data.forEach(m => {
+    // odwracamy kolejność: najstarsze na górze, najnowsze na dole
+    data.reverse().forEach(m => {
         chatOutput.innerHTML += `<p><b>${m.name}:</b> ${m.text}</p>`;
     });
+
+    // przewinięcie czatu na dół
+    chatOutput.scrollTop = chatOutput.scrollHeight;
 }
 
 // ----------------------------------------------------
@@ -240,4 +244,3 @@ function loadAllOnce() {
     getBoard();
     getNote();
 }
-
