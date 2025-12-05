@@ -1,73 +1,255 @@
-// Sprawdzanie logowania
-function isLoggedIn() {
-    const login = document.querySelector('.panel-lewy input[type="text"]').value.trim();
-    const haslo = document.querySelector('.panel-lewy input[type="password"]').value.trim();
-    return login !== "" && haslo !== "";
+const TOKEN_KEY = "token_aplikacji";
+const API = "http://10.103.8.110/jm4/repo2/api";
+
+let currentUser = null;
+
+// ----------------------------------------------------
+// Helpery tokenu
+// ----------------------------------------------------
+function getToken() {
+    return localStorage.getItem(TOKEN_KEY) || "";
+}
+function saveToken(t) {
+    localStorage.setItem(TOKEN_KEY, t);
+}
+function clearToken() {
+    localStorage.removeItem(TOKEN_KEY);
 }
 
-// Kliknięcie ZALOGUJ
-document.querySelector('.przycisk-logowania').addEventListener('click', function() {
-    const main = document.getElementById('panel-glowny');
+// ----------------------------------------------------
+// Elementy UI
+// ----------------------------------------------------
+const boardSection = document.getElementById("boardSection");
+const chatSection = document.getElementById("chatSection");
+const noteSection = document.getElementById("noteSection");
+const lockedSection = document.getElementById("lockedSection");
 
-    if (isLoggedIn()) {
-        main.classList.add('po-zalogowaniu');
+const boardArea = document.getElementById("board");
+const noteArea = document.getElementById("note");
+const chatOutput = document.getElementById("chatOutput");
+const msgInput = document.getElementById("msg");
 
-        // Dodaj sekcje do DOM jeśli jeszcze ich nie ma
-        if (!document.getElementById('sekcja-tablica')) {
-            main.innerHTML = `
-                <section id="boardSection" class="section hidden">
-                    <h2>📋 Tablica nauczyciela</h2>
-                    <textarea class="form-control rounded-3" rows="6" id="board"></textarea>
-                    <button id="saveBoardBtn" onclick="setBoard()" class="btn mt-3 text-light rounded-3" 
-                            style="background: var(--turquoise-dark); border-color: var(--turquoise);">
-                        Zapisz tablicę
-                    </button>
-                </section>
+const userInfo = document.getElementById("userInfo");
+const saveBoardBtn = document.getElementById("saveBoardBtn");
+const saveNoteBtn = document.getElementById("saveNoteBtn");
 
-                <section id="chatSection" class="section hidden"">
-                    <h2>💭 Czat grupowy</h2>
-                    <p>Tu pojawi się czat.</p>
-                    <div id="chatOutput" style="border:1px solid #fff; height:150px; overflow:auto;"></div>
-                    <input id="msg" placeholder="Wpisz wiadomość">
-                    <button id="btnSend" onclick="sendMessage()">Wyślij</button>
-                </section>
+// ----------------------------------------------------
+// Przyciski
+// ----------------------------------------------------
+document.getElementById("btnLogin").addEventListener("click", login);
+document.getElementById("btnLogout").addEventListener("click", logout);
+document.getElementById("btnSend").addEventListener("click", sendMessage);
+saveNoteBtn.addEventListener("click", saveNote);
 
-                <section id="noteSection" class="section hidden">
-                    <h2>📝 Notatki</h2>
-                    <textarea class="form-control rounded-3" rows="6" id="note"></textarea>
-                    <button id="saveNoteBtn">Zapisz notatkę</button>
-                </section>
-            `;
-        } else {
-            document.querySelectorAll('.blok-tresci').forEach(sec => sec.classList.remove('aktywne'));
-            document.getElementById('sekcja-tablica').classList.add('aktywne');
-        }
+// ----------------------------------------------------
+// Logowanie
+// ----------------------------------------------------
+async function login() {
+    const name = document.getElementById("loginName").value.trim();
+    const password = document.getElementById("loginPass").value.trim();
 
-    } else {
-        alert("Wpisz login i hasło!");
+    if (!name || !password) return alert("Podaj login i hasło!");
+
+    try {
+        let r = await fetch(`${API}/login.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, password })
+        });
+
+        let data = await r.json();
+
+        if (data.error) return alert(data.error);
+
+        saveToken(data.token);
+        currentUser = data.user;
+
+        userInfo.innerText = `${currentUser.name}`;
+
+        showByRole(currentUser.role);
+        loadAllOnce();
+
+    } catch (e) {
+        alert("Błąd połączenia z serwerem");
     }
-});
+}
 
-// Obsługa menu – delegacja
-document.querySelector('.panel-lewy').addEventListener('click', function(e) {
-    const link = e.target.closest('a[data-przejdz]');
+function logout() {
+    clearToken();
+    currentUser = null;
+    userInfo.innerText = "Nie zalogowano";
+    hideAll();
+}
+
+// ----------------------------------------------------
+// UI — pokazywanie sekcji wg roli
+// ----------------------------------------------------
+function hideAll() {
+    [boardSection, chatSection, noteSection, lockedSection].forEach(sec => {
+        if (sec) {
+            sec.style.display = "none";
+            sec.classList.remove("aktywne");
+        }
+    });
+}
+
+function showByRole(role) {
+    hideAll(); // ukryj wszystkie sekcje
+
+    // czat zawsze widoczny
+    if(chatSection) {
+        chatSection.style.display = "block";
+        chatSection.classList.add("aktywne");
+    }
+
+    if (role === "teacher") {
+        boardArea.readOnly = false;
+        saveBoardBtn.style.display = "inline-block";
+
+        noteArea.readOnly = false;
+        saveNoteBtn.style.display = "inline-block";
+    }
+
+    if (role === "student") {
+        boardArea.readOnly = true;
+        saveBoardBtn.style.display = "none";
+
+        noteArea.readOnly = false;
+        saveNoteBtn.style.display = "inline-block";
+    }
+}
+
+// ----------------------------------------------------
+// Menu (panel lewy — przełączanie sekcji)
+// ----------------------------------------------------
+document.querySelector(".sidebar").addEventListener("click", (e) => {
+    const link = e.target.closest("a[data-go]");
     if (!link) return;
 
-    e.preventDefault();
-    const target = link.getAttribute('data-przejdz');
-    const main = document.getElementById('panel-glowny');
+    hideAll();
 
-    if (!main.classList.contains('po-zalogowaniu')) {
-        main.innerHTML = `
-            <div class="text-center mt-5">
-                <h2>🔒 Zaloguj się</h2>
-                <p>Aby zobaczyć tę sekcję, musisz się zalogować.</p>
-            </div>
-        `;
+    const sectionId = link.getAttribute("data-go");
+
+    if (!currentUser) {
+        // pokaż komunikat po prawej stronie
+        if(lockedSection) {
+            lockedSection.style.display = "block";
+            lockedSection.classList.add("aktywne");
+        }
         return;
     }
 
-    main.querySelectorAll('.blok-tresci').forEach(sec => sec.classList.remove('aktywne'));
-    const section = document.getElementById(target);
-    if (section) section.classList.add('aktywne');
+    const section = document.getElementById(sectionId);
+    if(section) {
+        section.style.display = "block";
+        section.classList.add("aktywne");
+    }
 });
+
+// ----------------------------------------------------
+// CZAT
+// ----------------------------------------------------
+async function sendMessage() {
+    const text = msgInput.value.trim();
+    if (!text) return;
+
+    let r = await fetch(`${API}/messages.php`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": getToken()
+        },
+        body: JSON.stringify({ text })
+    });
+
+    let data = await r.json();
+
+    if (data.ok) {
+        msgInput.value = "";
+        getMessages();
+    }
+}
+
+async function getMessages() {
+    let r = await fetch(`${API}/messages.php`);
+    let data = await r.json();
+
+    chatOutput.innerHTML = "";
+    data.reverse().forEach(m => {
+        chatOutput.innerHTML += `<p><b>${m.name}:</b> ${m.text}</p>`;
+    });
+
+    chatOutput.scrollTop = chatOutput.scrollHeight;
+}
+
+// ----------------------------------------------------
+// TABLICA
+// ----------------------------------------------------
+async function setBoard() {
+    const content = boardArea.value;
+
+    await fetch(`${API}/board.php`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": getToken()
+        },
+        body: JSON.stringify({ content })
+    });
+}
+
+async function getBoard() {
+    let r = await fetch(`${API}/board.php`);
+    let data = await r.json();
+    boardArea.value = data.content || "";
+}
+
+saveBoardBtn.addEventListener("click", setBoard);
+
+// ----------------------------------------------------
+// NOTATKI
+// ----------------------------------------------------
+async function saveNote() {
+    const content = noteArea.value;
+
+    await fetch(`${API}/notes.php`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": getToken()
+        },
+        body: JSON.stringify({ content })
+    });
+}
+
+async function getNote() {
+    let r = await fetch(`${API}/notes.php`, {
+        headers: { "Authorization": getToken() }
+    });
+
+    let data = await r.json();
+    noteArea.value = data.content || "";
+}
+
+// ----------------------------------------------------
+// AUTO ODSWIEŻANIE
+// ----------------------------------------------------
+setInterval(() => {
+    if (!currentUser) return;
+
+    getMessages();
+
+    if (currentUser.role === "student") {
+        getBoard();
+    }
+
+}, 2000);
+
+// ----------------------------------------------------
+// Ładowanie po zalogowaniu
+// ----------------------------------------------------
+function loadAllOnce() {
+    getMessages();
+    getBoard();
+    getNote();
+}
