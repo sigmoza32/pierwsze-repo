@@ -11,13 +11,21 @@ $headers = getallheaders();
 $token = $headers['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? "";
 
 try {
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        // Proste SELECT bez JOIN — żeby nic nie filtrowało wyników
-        $stmt = $pdo->query("SELECT id, user_id, text, created_at FROM messages ORDER BY id ASC");
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($rows);
-        exit;
-    }
+   if ($_SERVER["REQUEST_METHOD"] === "GET") {
+
+    $stmt = $pdo->query("
+        SELECT messages.id, messages.text, messages.created_at, users.name 
+        FROM messages
+        JOIN users ON messages.user_id = users.id
+        ORDER BY messages.id DESC
+        LIMIT 50
+    ");
+
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo json_encode($rows);
+    exit;
+}
+
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // sprawdź token
