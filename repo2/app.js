@@ -1,297 +1,243 @@
-// app.js - kompletny, gotowy plik
-// Ustawienia:
-const TOKEN_KEY = "test_token";
+const TOKEN_KEY = "token_aplikacji";
 const API = "http://10.103.8.110/jm4/repo2/api";
 
-// Helpery elementów (będą zainicjowane w init)
-let loginName, loginPass, btnLogin, btnLogout, userInfo;
-let chatSection, chatOutput, msgInput, btnSend;
-let boardSection, boardEl, saveBoardBtn;
-let noteSection, noteEl, saveNoteBtn;
+let currentUser = null;
 
-// Blokady pisania (notatki) — żeby nie nadpisać wpisywanego tekstu
-let typingNote = false;
-let typingTimeoutNote = null;
-
-// Pobierz token i usera z tokena (token = base64(JSON))
+// ----------------------------------------------------
+// Helpery tokenu
+// ----------------------------------------------------
 function getToken() {
     return localStorage.getItem(TOKEN_KEY) || "";
 }
-function getUserFromToken() {
-    const t = getToken();
-    if (!t) return null;
-    try {
-        return JSON.parse(atob(t));
-    } catch {
-        return null;
-    }
+function saveToken(t) {
+    localStorage.setItem(TOKEN_KEY, t);
+}
+function clearToken() {
+    localStorage.removeItem(TOKEN_KEY);
 }
 
-// Mały UI helper
-function show(msg) { console.log(msg); alert(msg); }
+// ----------------------------------------------------
+// Elementy UI (od razu istnieją, bo w HTML są statyczne)
+// ----------------------------------------------------
+const boardSection = document.getElementById("boardSection");
+const chatSection = document.getElementById("chatSection");
+const noteSection = document.getElementById("noteSection");
 
-// ----------------- inicjalizacja elementów i eventy -----------------
-function init() {
-    // element references
-    loginName = document.getElementById("loginName");
-    loginPass = document.getElementById("loginPass");
-    btnLogin = document.getElementById("btnLogin");
-    btnLogout = document.getElementById("btnLogout");
-    userInfo = document.getElementById("userInfo");
+const boardArea = document.getElementById("board");
+const noteArea = document.getElementById("note");
+const chatOutput = document.getElementById("chatOutput");
 
-    chatSection = document.getElementById("chatSection");
-    chatOutput = document.getElementById("chatOutput");
-    msgInput = document.getElementById("msg");
-    btnSend = document.getElementById("btnSend");
+const userInfo = document.getElementById("userInfo");
+const saveBoardBtn = document.getElementById("saveBoardBtn");
+const saveNoteBtn = document.getElementById("saveNoteBtn");
+const msgInput = document.getElementById("msg");
 
-    boardSection = document.getElementById("boardSection");
-    boardEl = document.getElementById("board");
-    saveBoardBtn = document.getElementById("saveBoardBtn");
+// Przyciski logowania
+document.getElementById("btnLogin").addEventListener("click", login);
+document.getElementById("btnLogout").addEventListener("click", logout);
+document.getElementById("btnSend").addEventListener("click", sendMessage);
+saveNoteBtn.addEventListener("click", saveNote);
 
-    noteSection = document.getElementById("noteSection");
-    noteEl = document.getElementById("note");
-    saveNoteBtn = document.getElementById("saveNoteBtn");
-
-    // eventy
-    btnLogin.addEventListener("click", login);
-    btnLogout.addEventListener("click", logout);
-    btnSend.addEventListener("click", sendMessage);
-
-    saveBoardBtn.addEventListener("click", setBoard);
-    saveNoteBtn.addEventListener("click", saveNote);
-
-    // blokada nadpisywania notatek podczas pisania
-    if (noteEl) {
-        noteEl.addEventListener("input", () => {
-            typingNote = true;
-            clearTimeout(typingTimeoutNote);
-            typingTimeoutNote = setTimeout(() => typingNote = false, 1200);
-        });
-    }
-
-    // Po starcie: jeśli token jest, ustaw UI i pobierz raz dane
-    const user = getUserFromToken();
-    if (user) {
-        userInfo.innerText = `Zalogowano jako: ${user.name} (${user.role})`;
-        showByRole(user.role);
-        // ładowanie jednorazowe
-        getMessages();
-        getBoard();
-        getNote();
-    } else {
-        hideAll();
-    }
-
-    // AUTO-REFRESH:
-    // - getMessages co 2s jeśli zalogowany
-    // - getBoard co 2s tylko jeśli zalogowany student
-    setInterval(() => {
-        const u = getUserFromToken();
-        if (!u) return; // nikt nie jest zalogowany
-        // czat zawsze odświeżamy gdy zalogowany
-        getMessages().catch(e => console.error("getMessages error", e));
-
-        // tablica odświeżana tylko dla studentów
-        if (u.role === "student") {
-            // student widzi tablicę, ale nie edytuje -> safe to refresh
-            // notatki nie odświeżamy
-            getBoard().catch(e => console.error("getBoard error", e));
-        }
-    }, 2000);
-}
-
-// ----------------- widoczność sekcji -----------------
-function hideAll() {
-    chatSection.classList.add("hidden");
-    boardSection.classList.add("hidden");
-    noteSection.classList.add("hidden");
-}
-function showByRole(role) {
-    hideAll();
-    chatSection.classList.remove("hidden");
-
-    if (role === "teacher") {
-        boardSection.classList.remove("hidden");
-        saveBoardBtn.style.display = "inline-block";
-        boardEl.readOnly = false; // nauczyciel może edytować
-        noteSection.classList.remove("hidden"); // nauczyciel też widzi swoje notatki
-    } else if (role === "student") {
-        boardSection.classList.remove("hidden");
-        saveBoardBtn.style.display = "none"; // uczeń nie ma przycisku zapisu
-        boardEl.readOnly = true; // readonly dla ucznia
-        noteSection.classList.remove("hidden"); // uczeń widzi swoje notatki
-    }
-}
-
-// ----------------- AUTH (login/logout) -----------------
+// ----------------------------------------------------
+// Logowanie
+// ----------------------------------------------------
 async function login() {
+    const name = document.getElementById("loginName").value.trim();
+    const password = document.getElementById("loginPass").value.trim();
+
+    if (!name || !password) return alert("Podaj login i hasło!");
+
     try {
-        const resp = await fetch(`${API}/login.php`, {
+        let r = await fetch(`${API}/login.php`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                name: loginName.value,
-                password: loginPass.value
-            })
+            body: JSON.stringify({ name, password })
         });
-        const data = await resp.json();
-        if (!data.token) {
-            show(data.error || "Błąd logowania");
-            return;
-        }
-        // zapis tokena i ustaw UI
-        localStorage.setItem(TOKEN_KEY, data.token);
-        const user = getUserFromToken();
-        userInfo.innerText = `Zalogowano jako: ${user.name} (${user.role})`;
-        showByRole(user.role);
 
-        // Pobranie danych jednorazowo po zalogowaniu
-        await getMessages();
-        await getBoard();
-        await getNote();
-        show("Zalogowano");
+        let data = await r.json();
+
+        if (data.error) return alert(data.error);
+
+        saveToken(data.token);
+        currentUser = data.user;
+
+        userInfo.innerText = `${currentUser.name} (${currentUser.role})`;
+
+        showByRole(currentUser.role);
+        loadAllOnce();
+
     } catch (e) {
-        console.error(e);
-        show("Błąd połączenia");
+        alert("Błąd połączenia z serwerem");
     }
 }
 
 function logout() {
-    localStorage.removeItem(TOKEN_KEY);
-    userInfo.innerText = "Wylogowano";
+    clearToken();
+    currentUser = null;
+    userInfo.innerText = "Nie zalogowano";
     hideAll();
-    // wyczyść pola
-    chatOutput.innerHTML = "";
-    boardEl.value = "";
-    noteEl.value = "";
 }
 
-// ----------------- MESSAGES (czat) -----------------
+// ----------------------------------------------------
+// UI — pokazywanie sekcji wg roli
+// ----------------------------------------------------
+function hideAll() {
+    boardSection.classList.remove("aktywne");
+    chatSection.classList.remove("aktywne");
+    noteSection.classList.remove("aktywne");
+
+    boardSection.style.display = "none";
+    chatSection.style.display = "none";
+    noteSection.style.display = "none";
+}
+
+function showByRole(role) {
+    hideAll();
+
+    // Czat zawsze widoczny
+    chatSection.style.display = "block";
+    chatSection.classList.add("aktywne");
+
+    if (role === "teacher") {
+        boardSection.style.display = "block";
+        boardArea.readOnly = false;
+        saveBoardBtn.style.display = "inline-block";
+
+        noteSection.style.display = "block";
+    }
+
+    if (role === "student") {
+        boardSection.style.display = "block";
+        boardArea.readOnly = true;        // ← UCZEŃ NIE MOŻE EDYTOWAĆ
+        saveBoardBtn.style.display = "none";
+
+        noteSection.style.display = "block"; // UCZEŃ widzi notatki
+    }
+}
+
+// ----------------------------------------------------
+// Menu (panel lewy — przełączanie sekcji)
+// ----------------------------------------------------
+document.querySelector(".sidebar").addEventListener("click", (e) => {
+    const link = e.target.closest("a[data-go]");
+    if (!link) return;
+
+    if (!currentUser) {
+        alert("Zaloguj się, aby korzystać z sekcji!");
+        return;
+    }
+
+    hideAll();
+
+    const sectionId = link.getAttribute("data-go");
+    document.getElementById(sectionId).style.display = "block";
+    document.getElementById(sectionId).classList.add("aktywne");
+});
+
+// ----------------------------------------------------
+// CZAT
+// ----------------------------------------------------
 async function sendMessage() {
-    const token = getToken();
-    if (!token) { show("Zaloguj się aby wysyłać wiadomości"); return; }
     const text = msgInput.value.trim();
     if (!text) return;
-    try {
-        const r = await fetch(`${API}/messages.php`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": token
-            },
-            body: JSON.stringify({ text })
-        });
-        const data = await r.json();
-        if (data.ok) {
-            msgInput.value = "";
-            await getMessages();
-        } else {
-            show(data.error || "Błąd wysyłania");
-        }
-    } catch (e) {
-        console.error(e);
-        show("Błąd połączenia");
+
+    let r = await fetch(`${API}/messages.php`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": getToken()
+        },
+        body: JSON.stringify({ text })
+    });
+
+    let data = await r.json();
+
+    if (data.ok) {
+        msgInput.value = "";
+        getMessages();
     }
 }
 
 async function getMessages() {
-    // require login
-    if (!getToken()) return;
-    try {
-        const r = await fetch(`${API}/messages.php`);
-        const list = await r.json();
-        chatOutput.innerHTML = "";
-        (list || []).forEach(m => {
-            const p = document.createElement("p");
-            p.textContent = `${m.name}: ${m.text}`;
-            chatOutput.appendChild(p);
-        });
-        // przewiń do dołu
-        chatOutput.scrollTop = chatOutput.scrollHeight;
-    } catch (e) {
-        console.error("getMessages error", e);
-    }
+    let r = await fetch(`${API}/messages.php`);
+    let data = await r.json();
+
+    chatOutput.innerHTML = "";
+
+    data.forEach(m => {
+        chatOutput.innerHTML += `<p><b>${m.name}:</b> ${m.text}</p>`;
+    });
 }
 
-// ----------------- BOARD (tablica) -----------------
-async function getBoard() {
-    // require login (we only show content for logged)
-    if (!getToken()) return;
-    try {
-        const r = await fetch(`${API}/board.php`);
-        const data = await r.json();
-        // Jeżeli uczeń edytuje (ale uczeń jest readonly), notatka nie będzie nadpisana.
-        // Dla zachowania bezpieczeństwa: nie nadpisuj notatki, jeśli note użytkownik edytuje (dot. notatek)
-        boardEl.value = data.content || "";
-    } catch (e) {
-        console.error("getBoard error", e);
-    }
-}
-
+// ----------------------------------------------------
+// TABLICA
+// ----------------------------------------------------
 async function setBoard() {
-    const token = getToken();
-    if (!token) { show("Zaloguj się"); return; }
-    // tylko nauczyciel ma przycisk widoczny i może zapisać
-    try {
-        const r = await fetch(`${API}/board.php`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": token
-            },
-            body: JSON.stringify({ content: boardEl.value })
-        });
-        const data = await r.json();
-        if (data.ok) show("Tablica zapisana");
-        else show(data.error || "Błąd zapisu");
-    } catch (e) {
-        console.error(e);
-        show("Błąd połączenia");
-    }
+    const content = boardArea.value;
+
+    await fetch(`${API}/board.php`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": getToken()
+        },
+        body: JSON.stringify({ content })
+    });
 }
 
-// ----------------- NOTES (notatki prywatne) -----------------
-async function getNote() {
-    if (!getToken()) return;
-    try {
-        const r = await fetch(`${API}/notes.php`, {
-            headers: { "Authorization": getToken() }
-        });
-        const data = await r.json();
-        // nie nadpisuj, jeśli użytkownik aktualnie wpisuje
-        if (!typingNote) noteEl.value = data.content || "";
-    } catch (e) {
-        console.error("getNote error", e);
-    }
+async function getBoard() {
+    let r = await fetch(`${API}/board.php`);
+    let data = await r.json();
+    boardArea.value = data.content || "";
 }
 
+saveBoardBtn.addEventListener("click", setBoard);
+
+// ----------------------------------------------------
+// NOTATKI
+// ----------------------------------------------------
 async function saveNote() {
-    const token = getToken();
-    if (!token) { show("Zaloguj się"); return; }
-    try {
-        const r = await fetch(`${API}/notes.php`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": token
-            },
-            body: JSON.stringify({ content: noteEl.value })
-        });
-        const data = await r.json();
-        if (data.ok) show("Notatka zapisana");
-        else show(data.error || "Błąd zapisu notatki");
-    } catch (e) {
-        console.error(e);
-        show("Błąd połączenia");
-    }
+    const content = noteArea.value;
+
+    await fetch(`${API}/notes.php`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": getToken()
+        },
+        body: JSON.stringify({ content })
+    });
 }
 
-// ----------------- expose for inline onclicks (if needed) -----------------
-window.login = login;
-window.logout = logout;
-window.sendMessage = sendMessage;
-window.setBoard = setBoard;
-window.saveNote = saveNote;
+async function getNote() {
+    let r = await fetch(`${API}/notes.php`, {
+        headers: { "Authorization": getToken() }
+    });
 
-// start init after DOM loaded
-document.addEventListener("DOMContentLoaded", init);
+    let data = await r.json();
+    noteArea.value = data.content || "";
+}
+
+// ----------------------------------------------------
+// AUTO ODSWIEŻANIE
+// ----------------------------------------------------
+setInterval(() => {
+    if (!currentUser) return;
+
+    getMessages();
+
+    if (currentUser.role === "student") {
+        getBoard();
+    }
+
+}, 2000);
+
+// ----------------------------------------------------
+// Ładowanie po zalogowaniu
+// ----------------------------------------------------
+function loadAllOnce() {
+    getMessages();
+    getBoard();
+    getNote();
+}
+
