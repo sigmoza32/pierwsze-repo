@@ -92,26 +92,23 @@ function hideAll() {
 }
 
 function showByRole(role) {
-    hideAll();
+    hideAll(); // ukryj wszystkie sekcje
 
-    // Czat zawsze widoczny
-    chatSection.style.display = "block";
-    chatSection.classList.add("aktywne");
-
+    // odblokuj/ustaw dostęp do elementów zależnie od roli
     if (role === "teacher") {
-        boardSection.style.display = "block";
         boardArea.readOnly = false;
         saveBoardBtn.style.display = "inline-block";
 
-        noteSection.style.display = "block";
+        noteArea.readOnly = false;
+        saveNoteBtn.style.display = "inline-block";
     }
 
     if (role === "student") {
-        boardSection.style.display = "block";
-        boardArea.readOnly = true;        // ← UCZEŃ NIE MOŻE EDYTOWAĆ
+        boardArea.readOnly = true;        // uczeń nie może edytować
         saveBoardBtn.style.display = "none";
 
-        noteSection.style.display = "block"; // UCZEŃ widzi notatki
+        noteArea.readOnly = false;        // uczeń może edytować notatki
+        saveNoteBtn.style.display = "inline-block";
     }
 }
 
