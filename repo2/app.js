@@ -17,22 +17,25 @@ function clearToken() {
 }
 
 // ----------------------------------------------------
-// Elementy UI (od razu istnieją, bo w HTML są statyczne)
+// Elementy UI
 // ----------------------------------------------------
 const boardSection = document.getElementById("boardSection");
 const chatSection = document.getElementById("chatSection");
 const noteSection = document.getElementById("noteSection");
+const lockedSection = document.getElementById("lockedSection");
 
 const boardArea = document.getElementById("board");
 const noteArea = document.getElementById("note");
 const chatOutput = document.getElementById("chatOutput");
+const msgInput = document.getElementById("msg");
 
 const userInfo = document.getElementById("userInfo");
 const saveBoardBtn = document.getElementById("saveBoardBtn");
 const saveNoteBtn = document.getElementById("saveNoteBtn");
-const msgInput = document.getElementById("msg");
 
-// Przyciski logowania
+// ----------------------------------------------------
+// Przyciski
+// ----------------------------------------------------
 document.getElementById("btnLogin").addEventListener("click", login);
 document.getElementById("btnLogout").addEventListener("click", logout);
 document.getElementById("btnSend").addEventListener("click", sendMessage);
@@ -45,7 +48,7 @@ async function login() {
     const name = document.getElementById("loginName").value.trim();
     const password = document.getElementById("loginPass").value.trim();
 
-    if (!name || !password) return alert("Podaj login i hasło!");
+    if (!name || !password) return userInfo.innerText = "Podaj login i hasło!"; 
 
     try {
         let r = await fetch(`${API}/login.php`, {
@@ -56,18 +59,18 @@ async function login() {
 
         let data = await r.json();
 
-        if (data.error) return alert(data.error);
+        if (data.error) return userInfo.innerText = data.error; 
 
         saveToken(data.token);
         currentUser = data.user;
 
-        userInfo.innerText = `${currentUser.name} `;
+        userInfo.innerText = `${currentUser.name}`;
 
         showByRole(currentUser.role);
         loadAllOnce();
 
     } catch (e) {
-        alert("Błąd połączenia z serwerem");
+        userInfo.innerText = "Błąd połączenia";
     }
 }
 
@@ -82,19 +85,23 @@ function logout() {
 // UI — pokazywanie sekcji wg roli
 // ----------------------------------------------------
 function hideAll() {
-    boardSection.classList.remove("aktywne");
-    chatSection.classList.remove("aktywne");
-    noteSection.classList.remove("aktywne");
-
-    boardSection.style.display = "none";
-    chatSection.style.display = "none";
-    noteSection.style.display = "none";
+    [boardSection, chatSection, noteSection, lockedSection].forEach(sec => {
+        if (sec) {
+            sec.style.display = "none";
+            sec.classList.remove("aktywne");
+        }
+    });
 }
 
 function showByRole(role) {
     hideAll(); // ukryj wszystkie sekcje
 
-    // odblokuj/ustaw dostęp do elementów zależnie od roli
+    // czat zawsze widoczny
+    if(chatSection) {
+        chatSection.style.display = "block";
+        chatSection.classList.add("aktywne");
+    }
+
     if (role === "teacher") {
         boardArea.readOnly = false;
         saveBoardBtn.style.display = "inline-block";
@@ -104,10 +111,10 @@ function showByRole(role) {
     }
 
     if (role === "student") {
-        boardArea.readOnly = true;        // uczeń nie może edytować
+        boardArea.readOnly = true;
         saveBoardBtn.style.display = "none";
 
-        noteArea.readOnly = false;        // uczeń może edytować notatki
+        noteArea.readOnly = false;
         saveNoteBtn.style.display = "inline-block";
     }
 }
@@ -119,16 +126,24 @@ document.querySelector(".sidebar").addEventListener("click", (e) => {
     const link = e.target.closest("a[data-go]");
     if (!link) return;
 
-    if (!currentUser) {
-        alert("Zaloguj się, aby korzystać z sekcji!");
-        return;
-    }
-
     hideAll();
 
     const sectionId = link.getAttribute("data-go");
-    document.getElementById(sectionId).style.display = "block";
-    document.getElementById(sectionId).classList.add("aktywne");
+
+    if (!currentUser) {
+        // pokaż komunikat po prawej stronie
+        if(lockedSection) {
+            lockedSection.style.display = "block";
+            lockedSection.classList.add("aktywne");
+        }
+        return;
+    }
+
+    const section = document.getElementById(sectionId);
+    if(section) {
+        section.style.display = "block";
+        section.classList.add("aktywne");
+    }
 });
 
 // ----------------------------------------------------
@@ -160,13 +175,10 @@ async function getMessages() {
     let data = await r.json();
 
     chatOutput.innerHTML = "";
-
-    // odwracamy kolejność: najstarsze na górze, najnowsze na dole
     data.reverse().forEach(m => {
         chatOutput.innerHTML += `<p><b>${m.name}:</b> ${m.text}</p>`;
     });
 
-    // przewinięcie czatu na dół
     chatOutput.scrollTop = chatOutput.scrollHeight;
 }
 
